@@ -1,7 +1,5 @@
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
-from os import listdir
 
 
 
@@ -26,6 +24,7 @@ class Classifier(Model):
         self.classifier_model.setC(C)
 
     def train(self, train_samples, feedback):
+
         self.classifier_model.train(train_samples,cv2.ml.ROW_SAMPLE,feedback)
 
     def predict(self, test_samples):
