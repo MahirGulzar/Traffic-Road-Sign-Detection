@@ -1,7 +1,9 @@
 import cv2
 import numpy as np
 
-
+'''
+    @Author: Mahir Gulzar
+'''
 
 class Model(object):
     def load(self, fn):

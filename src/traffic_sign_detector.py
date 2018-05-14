@@ -3,6 +3,8 @@ import argparse
 
 
 '''
+    @Author: Mahir Gulzar
+    
     Traffic Sign Detector: Main entry point of the application
 '''
 
