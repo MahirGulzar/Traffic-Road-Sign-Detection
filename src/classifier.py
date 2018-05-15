@@ -1,5 +1,4 @@
 import cv2
-import numpy as np
 
 '''
     @Author: Mahir Gulzar
@@ -7,9 +6,9 @@ import numpy as np
 
 class Model(object):
     def load(self, fn):
-        self.model.load(fn)
+        self.classifier_model.load(fn)
     def save(self, fn):
-        self.model.save(fn)
+        self.classifier_model.save(fn)
 
 
 '''
@@ -17,8 +16,9 @@ class Model(object):
 '''
 class Classifier(Model):
 
-    def __init__(self,C=10,gamma=0.5):
-
+    def __init__(self):
+        C = 10
+        gamma = 0.5
         self.classifier_model=cv2.ml.SVM_create()
         self.classifier_model.setKernel(cv2.ml.SVM_RBF)
         self.classifier_model.setGamma(gamma)

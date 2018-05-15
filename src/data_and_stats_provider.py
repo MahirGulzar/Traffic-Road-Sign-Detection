@@ -1,8 +1,9 @@
-import cv2
-import numpy as np
 from os import listdir
 
-from classifier import Classifier
+import cv2
+import numpy as np
+
+from src.classifier import Classifier
 
 
 '''
@@ -64,7 +65,7 @@ class Provider():
         print("\n--------------------------------------------------------")
 
         print('Deskew images ... ')
-        data_deskewed = list(map(self.deskew, data))
+        data_balanced = list(map(self.balance_image, data))
 
         print("\n--------------------------------------------------------")
 
@@ -76,7 +77,7 @@ class Provider():
 
         print('Calculating HoG descriptor for every image ... ')
         hog_descriptors = []
-        for img in data_deskewed:
+        for img in data_balanced:
             hog_descriptors.append(hog.compute(img))
         hog_descriptors = np.squeeze(hog_descriptors)
 
@@ -84,19 +85,19 @@ class Provider():
 
         print('Spliting data into training (90%) and test set (10%)... ')
         train_n = int(0.9 * len(hog_descriptors))
-        data_train, data_test = np.split(data_deskewed, [train_n])
+        # data_train, data_test = np.split(data_deskewed, [train_n])
         hog_descriptors_train, hog_descriptors_test = np.split(hog_descriptors, [train_n])
         labels_train, labels_test = np.split(labels, [train_n])
 
         print("\n--------------------------------------------------------")
 
         print('Training Classifier ...')
-        model = self.model()
+        model = self.model
         model.train(hog_descriptors_train, labels_train)
 
         print("\n--------------------------------------------------------")
 
-        model.save('data_svm.dat')
+        model.save('trained_model.dat')
 
         print("\n--------------------------------------------------------")
 
@@ -108,15 +109,16 @@ class Provider():
           to transform the image.
     '''
 
-    def deskew(self, img):
+    def balance_image(self, img):
 
         m = cv2.moments(img)
-        print(m)
+        # print(m)
         if abs(m['mu02']) < 1e-2:
             return img.copy()
         skew = m['mu11'] / m['mu02']
         M = np.float32([[1, skew, -0.5 * self.size * skew], [0, 1, 0]])
 
+        # transform skewed image
         img = cv2.warpAffine(img, M, (self.size, self.size), flags=cv2.WARP_INVERSE_MAP | cv2.INTER_LINEAR)
         return img
 
@@ -145,11 +147,12 @@ class Provider():
 
     def predict_label(self,model, data):
 
-        gray = cv2.cvtColor(data, cv2.COLOR_BGR2GRAY)
-        img = [cv2.resize(gray, (self.size, self.size))]
-        img_deskewed = list(map(self.deskew, img))
+        gray_scale = cv2.cvtColor(data, cv2.COLOR_BGR2GRAY)
+        img = [cv2.resize(gray_scale, (self.size, self.size))]
+
+        img_balanced = list(map(self.balance_image, img))
         hog = self.hog()
-        hog_descriptors = np.array([hog.compute(img_deskewed[0])])
+        hog_descriptors = np.array([hog.compute(img_balanced[0])])
         hog_descriptors = np.reshape(hog_descriptors, [-1, hog_descriptors.shape[1]])
         return int(model.predict(hog_descriptors)[0])
 
