@@ -23,7 +23,7 @@ def main(args):
     clear_output()
 
     # Training the model
-    trained_model=provider.model_trainer();
+    trained_model=provider.model_trainer(args.load);
 
     # open input video
     video = cv2.VideoCapture(args.file)
@@ -153,7 +153,7 @@ def main(args):
             sign_count += 1
             coordinates.append(location)
 
-        cv2.imshow('Prediction', image)
+        cv2.imshow('Detection', image)
         count = count + 1
 
         output_writer.write(image)
@@ -173,8 +173,14 @@ if __name__ == '__main__':
 
     parser.add_argument(
         '--file',
-        default='samplevideo1.mp4',
+        default='latest video.mp4',
         help="Input video file"
+    )
+    parser.add_argument(
+        '--load',
+        default=None,
+        help='Pass a file path to Load already trained model',
+        nargs='?'
     )
 
     args = parser.parse_args()

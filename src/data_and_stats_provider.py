@@ -48,7 +48,7 @@ class Provider():
                     labels.append(sign_type)
         return np.array(dataset), np.array(labels)
 
-    def model_trainer(self):
+    def model_trainer(self,load_trained):
         print('Loading data from data.png ... ')
         # Load data.
         data, labels = self.load_dataset()
@@ -93,10 +93,12 @@ class Provider():
 
         print('Training Classifier ...')
         model = self.model
+        # if load_trained is not None:
+        #     print('loading trained model...')
+        #     model.load(str(load_trained))
+        # else:
+        print('Training new model...')
         model.train(hog_descriptors_train, labels_train)
-
-        print("\n--------------------------------------------------------")
-
         model.save('trained_model.dat')
 
         print("\n--------------------------------------------------------")
