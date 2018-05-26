@@ -81,10 +81,12 @@ class Provider():
             hog_descriptors.append(hog.compute(img))
         hog_descriptors = np.squeeze(hog_descriptors)
 
+        print('shape'+str(hog_descriptors.shape))
+
         print("\n--------------------------------------------------------")
 
-        print('Spliting data into training (90%) and test set (10%)... ')
-        train_n = int(0.9 * len(hog_descriptors))
+        print('Spliting data into training (85%) and test set (15%)... ')
+        train_n = int(0.85 * len(hog_descriptors))
         # data_train, data_test = np.split(data_deskewed, [train_n])
         hog_descriptors_train, hog_descriptors_test = np.split(hog_descriptors, [train_n])
         labels_train, labels_test = np.split(labels, [train_n])
@@ -100,6 +102,8 @@ class Provider():
         print('Training new model...')
         model.train(hog_descriptors_train, labels_train)
         model.save('trained_model.dat')
+
+        self.eval_trained_model(hog_descriptors_test,labels_test)
 
         print("\n--------------------------------------------------------")
 
@@ -157,4 +161,10 @@ class Provider():
         hog_descriptors = np.array([hog.compute(img_balanced[0])])
         hog_descriptors = np.reshape(hog_descriptors, [-1, hog_descriptors.shape[1]])
         return int(model.predict(hog_descriptors)[0])
+
+    def eval_trained_model(self, samples, labels):
+        predicted = self.model.predict(samples)
+        wronge_predicted = (labels != predicted).mean()
+        print('Accuracy: %.4f %%' % ((1 - wronge_predicted) * 100))
+        print('')
 

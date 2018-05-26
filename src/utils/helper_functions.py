@@ -14,7 +14,7 @@ SIGNS = ["ERROR",
         "TURN RIGHT",
         "DO NOT TURN LEFT",
         "DO NOT TURN RIGHT",
-        "ONE WAY",
+        "ONE WAY (NO ENTRY)",
         "SPEED LIMIT",
         "OTHER"]
 
